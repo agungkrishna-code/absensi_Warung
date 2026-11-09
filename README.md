@@ -84,7 +84,7 @@ Setelah migrasi dijalankan dan dua akun uji tersedia:
 npm run build
 ```
 
-Output statis ada di `out/`.
+Output statis ada di `out/`. Perintah build juga menjalankan `scripts/fix-static-export-segments.mjs` untuk meratakan file prefetch RSC yang ditulis Next.js 16 ke folder bersarang di Windows. Di Linux/Cloudflare Pages script tersebut tidak melakukan perubahan.
 
 Cloudflare Pages:
 
