@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Warung Attendance
 
-## Getting Started
+Aplikasi absensi karyawan warung berbasis Next.js App Router, Supabase, dan Cloudflare Pages.
+Frontend berupa static export; seluruh akses data melalui Supabase SDK, RLS, dan PostgreSQL RPC.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router, static export)
+- TypeScript + Tailwind CSS + Lucide
+- Supabase Auth, PostgreSQL, RLS, RPC
+- Cloudflare Pages (`out/`)
+
+## Setup lokal
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Isi `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Jangan pernah memakai `service_role` key di frontend.
 
-## Learn More
+## Setup Supabase
 
-To learn more about Next.js, take a look at the following resources:
+1. Buat project Supabase.
+2. Buka SQL Editor, jalankan `supabase/migrations/0001_init.sql`.
+3. Authentication → Providers → Email: aktifkan. Nonaktifkan public sign-up agar akun hanya dibuat admin.
+4. Authentication → URL Configuration: tambahkan URL aplikasi (localhost dan Cloudflare Pages).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Membuat admin pertama
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Authentication → Users → Add user (email + password). Aktifkan **Auto Confirm User**.
+2. Di SQL Editor:
 
-## Deploy on Vercel
+```sql
+update public.profiles
+set role = 'admin'
+where email = 'admin@warung.id';
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Trigger `handle_new_user` otomatis membuat profil dengan role `employee`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Membuat akun karyawan
+
+1. Tambahkan user lewat Supabase Dashboard (jangan lewat UI publik).
+2. Login sebagai admin → Karyawan → Tambah karyawan → pilih akun login tersebut.
+
+Role tidak dapat diubah dari frontend. Perubahan role hanya lewat SQL/service role.
+
+## Aturan absensi
+
+- `record_check_in()` dan `record_check_out()` memakai `auth.uid()`; ID karyawan dan timestamp tidak dikirim dari browser.
+- Tanggal kerja dihitung dengan `Asia/Makassar`; timestamp disimpan sebagai `TIMESTAMPTZ`.
+- Satu absensi per karyawan per tanggal (`unique (employee_id, work_date)`).
+- Status `late` dihitung saat check-in bila ada jadwal dan waktu check-in melewati `shift_start`.
+- Tanpa jadwal: check-in tetap diizinkan, status `present`.
+- Karyawan nonaktif tidak dapat check-in/check-out.
+- Shift harus selesai di hari yang sama (MVP).
+
+## Checklist uji manual
+
+Setelah migrasi dijalankan dan dua akun uji tersedia:
+
+1. Login admin → tambah 2 karyawan → hubungkan masing-masing ke akun login.
+2. Tambah jadwal hari ini untuk karyawan A dengan `shift_start` yang sudah lewat.
+3. Login karyawan A → check-in → status harus `Terlambat` dan jam masuk terisi.
+4. Check-in lagi → harus muncul pesan "sudah check-in"; check-out → berhasil; check-out lagi → ditolak.
+5. Login karyawan B → riwayat hanya berisi data B, bukan data A.
+6. Buka `/employees` sebagai karyawan B → harus dialihkan ke dashboard.
+7. Nonaktifkan karyawan A sebagai admin → check-in A harus ditolak.
+8. Buka laporan bulan ini → angka hadir/terlambat/tanpa keterangan sesuai data; ekspor CSV terbuka rapi di Excel.
+9. Buka di layar ponsel → navigasi bawah, form, dan tabel tetap bisa dipakai.
+
+## Build dan deploy
+
+```bash
+npm run build
+```
+
+Output statis ada di `out/`.
+
+Cloudflare Pages:
+
+- Framework preset: None
+- Build command: `npm run build`
+- Build output directory: `out`
+- Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Node version: 22 atau lebih baru
+
+Nilai `NEXT_PUBLIC_*` di-inline saat build, jadi variabel harus sudah diatur sebelum build Cloudflare Pages.
+
+## Struktur
+
+```
+src/app/{login,dashboard,employees,attendance,schedules,reports}
+src/components   # shell, auth provider, UI
+src/lib          # supabase client, utils
+src/types
+supabase/migrations
+```
+
+## Keamanan
+
+- RLS aktif pada semua tabel aplikasi.
+- Karyawan hanya dapat membaca data miliknya.
+- Penulisan absensi hanya melalui RPC `SECURITY DEFINER` dengan `search_path` tetap.
+- Role tidak dipercaya dari frontend dan dilindungi trigger.
+- CSV export dilindungi dari formula injection.
