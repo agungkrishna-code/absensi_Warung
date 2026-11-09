@@ -134,6 +134,7 @@ as $$
 $$;
 
 revoke all on function public.is_admin() from public;
+revoke all on function public.is_admin() from anon;
 grant execute on function public.is_admin() to authenticated;
 
 -- ---------------------------------------------------------------------------
@@ -355,5 +356,7 @@ $$;
 
 revoke all on function public.record_check_in() from public;
 revoke all on function public.record_check_out() from public;
+revoke all on function public.record_check_in() from anon;
+revoke all on function public.record_check_out() from anon;
 grant execute on function public.record_check_in() to authenticated;
 grant execute on function public.record_check_out() to authenticated;
