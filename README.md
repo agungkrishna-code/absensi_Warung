@@ -113,3 +113,4 @@ supabase/migrations
 - Penulisan absensi hanya melalui RPC `SECURITY DEFINER` dengan `search_path` tetap.
 - Role tidak dipercaya dari frontend dan dilindungi trigger.
 - CSV export dilindungi dari formula injection.
+- `public/_headers` menambahkan header keamanan dasar dan cache aset statis di Cloudflare Pages.
