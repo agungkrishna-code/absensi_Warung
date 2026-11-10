@@ -3,31 +3,23 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  BarChart3,
-  CalendarDays,
-  ClipboardList,
-  LayoutDashboard,
-  LogOut,
-  Users,
-  UtensilsCrossed,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useAuth } from "@/components/auth-provider";
 import { Badge, Button, Spinner } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types";
 
 const adminNav = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/employees", label: "Karyawan", icon: Users },
-  { href: "/attendance", label: "Absensi", icon: ClipboardList },
-  { href: "/schedules", label: "Jadwal", icon: CalendarDays },
-  { href: "/reports", label: "Laporan", icon: BarChart3 },
+  { href: "/dashboard", label: "Dashboard", icon: "ph:house-line" },
+  { href: "/employees", label: "Karyawan", icon: "ph:users-three" },
+  { href: "/attendance", label: "Absensi", icon: "ph:clipboard-text" },
+  { href: "/schedules", label: "Jadwal", icon: "ph:calendar-dots" },
+  { href: "/reports", label: "Laporan", icon: "ph:chart-bar" },
 ];
 
 const employeeNav = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/attendance", label: "Riwayat", icon: ClipboardList },
+  { href: "/dashboard", label: "Dashboard", icon: "ph:house-line" },
+  { href: "/attendance", label: "Riwayat", icon: "ph:clipboard-text" },
 ];
 
 function FullScreen({ children }: { children: React.ReactNode }) {
@@ -114,8 +106,8 @@ export function ProtectedPage({
     <div className="min-h-screen md:flex">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-stone-200 bg-white md:flex">
         <div className="flex items-center gap-2.5 px-5 py-5">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-amber-600 text-white">
-            <UtensilsCrossed size={18} />
+          <span className="flex size-9 items-center justify-center rounded-xl bg-amber-700 text-white">
+            <Icon icon="ph:storefront" width={20} aria-hidden="true" />
           </span>
           <div>
             <p className="text-sm font-semibold leading-tight text-stone-900">Warung</p>
@@ -125,7 +117,6 @@ export function ProtectedPage({
 
         <nav className="flex-1 space-y-1 px-3">
           {nav.map((item) => {
-            const Icon = item.icon;
             const active = pathname === item.href;
             return (
               <Link
@@ -134,11 +125,11 @@ export function ProtectedPage({
                 className={cn(
                   "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700",
                   active
-                    ? "bg-stone-900 text-white"
-                    : "text-stone-600 hover:bg-stone-100 hover:text-stone-900",
+                    ? "bg-amber-800 text-white"
+                    : "text-stone-600 hover:bg-amber-50 hover:text-stone-900",
                 )}
               >
-                <Icon size={18} />
+                <Icon icon={item.icon} width={19} aria-hidden="true" />
                 {item.label}
               </Link>
             );
@@ -160,21 +151,21 @@ export function ProtectedPage({
             className="w-full justify-start"
             onClick={() => void signOut()}
           >
-            <LogOut size={16} /> Keluar
+            <Icon icon="ph:sign-out" width={18} aria-hidden="true" /> Keluar
           </Button>
         </div>
       </aside>
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-stone-200 bg-white px-4 py-3 md:hidden">
+        <header className="flex items-center justify-between border-b border-stone-200 bg-amber-50/70 px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-amber-600 text-white">
-              <UtensilsCrossed size={16} />
+            <span className="flex size-8 items-center justify-center rounded-lg bg-amber-700 text-white">
+              <Icon icon="ph:storefront" width={18} aria-hidden="true" />
             </span>
             <span className="text-sm font-semibold">Warung Attendance</span>
           </div>
           <Button variant="ghost" size="sm" onClick={() => void signOut()} aria-label="Keluar">
-            <LogOut size={16} />
+            <Icon icon="ph:sign-out" width={18} aria-hidden="true" />
           </Button>
         </header>
 
@@ -184,7 +175,6 @@ export function ProtectedPage({
 
         <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-stone-200 bg-white/95 backdrop-blur md:hidden">
           {nav.map((item) => {
-            const Icon = item.icon;
             const active = pathname === item.href;
             return (
               <Link
@@ -195,7 +185,7 @@ export function ProtectedPage({
                   active ? "text-amber-700" : "text-stone-500",
                 )}
               >
-                <Icon size={20} />
+                <Icon icon={item.icon} width={21} aria-hidden="true" />
                 {item.label}
               </Link>
             );

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, LogIn, UtensilsCrossed } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useAuth } from "@/components/auth-provider";
 import { Alert, Button, Field, Input, Spinner } from "@/components/ui";
 import { getSupabase } from "@/lib/supabase/client";
@@ -56,7 +56,7 @@ export default function LoginPage() {
 
         <div className="relative flex items-center gap-3">
           <span className="flex size-11 items-center justify-center rounded-2xl bg-amber-600 text-white">
-            <UtensilsCrossed size={22} />
+            <Icon icon="ph:storefront" width={24} aria-hidden="true" />
           </span>
           <div>
             <p className="font-semibold leading-tight">Warung Attendance</p>
@@ -84,7 +84,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <span className="flex size-10 items-center justify-center rounded-xl bg-amber-600 text-white">
-              <UtensilsCrossed size={20} />
+              <Icon icon="ph:storefront" width={22} aria-hidden="true" />
             </span>
             <div>
               <p className="font-semibold leading-tight">Warung Attendance</p>
@@ -130,13 +130,13 @@ export default function LoginPage() {
                   className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-stone-400 hover:text-stone-700"
                   aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  <Icon icon={showPassword ? "ph:eye-slash" : "ph:eye"} width={19} aria-hidden="true" />
                 </button>
               </div>
             </Field>
 
             <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? <Spinner className="size-4 border-white/40 border-t-white" /> : <LogIn size={17} />}
+              {submitting ? <Spinner className="size-4 border-white/40 border-t-white" /> : <Icon icon="ph:sign-in" width={19} aria-hidden="true" />}
               {submitting ? "Memproses…" : "Masuk"}
             </Button>
           </form>

@@ -2,16 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  CalendarDays,
-  CheckCircle2,
-  Clock,
-  LogIn,
-  LogOut,
-  Timer,
-  Users,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useAuth } from "@/components/auth-provider";
 import { ProtectedPage } from "@/components/app-shell";
 import {
@@ -184,7 +175,7 @@ function EmployeeDashboard() {
 
             <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1">
-                <CalendarDays size={14} className="text-amber-400" />
+                <Icon icon="ph:calendar-dots" width={16} className="text-amber-400" aria-hidden="true" />
                 {schedule
                   ? `Shift ${formatShift(schedule.shift_start)}–${formatShift(schedule.shift_end)}`
                   : "Tidak ada jadwal shift"}
@@ -227,7 +218,7 @@ function EmployeeDashboard() {
                 {working === "in" ? (
                   <Spinner className="size-4 border-white/40 border-t-white" />
                 ) : (
-                  <LogIn size={18} />
+                  <Icon icon="ph:sign-in" width={19} aria-hidden="true" />
                 )}
                 Check-in
               </Button>
@@ -237,7 +228,7 @@ function EmployeeDashboard() {
                 disabled={loading || !today || Boolean(today.check_out) || working !== null}
                 onClick={() => void record("out")}
               >
-                {working === "out" ? <Spinner className="size-4" /> : <LogOut size={18} />}
+                {working === "out" ? <Spinner className="size-4" /> : <Icon icon="ph:sign-out" width={19} aria-hidden="true" />}
                 Check-out
               </Button>
             </div>
@@ -255,7 +246,7 @@ function EmployeeDashboard() {
                 href="/attendance"
                 className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800"
               >
-                Semua <ArrowRight size={14} />
+                Semua <Icon icon="ph:arrow-right" width={16} aria-hidden="true" />
               </Link>
             }
           />
@@ -329,7 +320,7 @@ function AdminDashboard() {
         action={
           <Link href="/reports">
             <Button variant="secondary" size="sm">
-              Lihat laporan <ArrowRight size={15} />
+              Lihat laporan <Icon icon="ph:arrow-right" width={17} aria-hidden="true" />
             </Button>
           </Link>
         }
@@ -339,22 +330,22 @@ function AdminDashboard() {
         <StatCard
           label="Karyawan aktif"
           value={loading ? "—" : employees.length}
-          icon={<Users size={18} />}
+          icon={<Icon icon="ph:users-three" width={19} aria-hidden="true" />}
         />
         <StatCard
           label="Sudah absen"
           value={loading ? "—" : attendance.length}
-          icon={<CheckCircle2 size={18} />}
+          icon={<Icon icon="ph:check-circle" width={19} aria-hidden="true" />}
         />
         <StatCard
           label="Terlambat"
           value={loading ? "—" : late}
-          icon={<Timer size={18} />}
+          icon={<Icon icon="ph:hourglass-medium" width={19} aria-hidden="true" />}
         />
         <StatCard
           label="Belum absen"
           value={loading ? "—" : notCheckedIn}
-          icon={<Clock size={18} />}
+          icon={<Icon icon="ph:clock" width={19} aria-hidden="true" />}
         />
       </div>
 
@@ -367,7 +358,7 @@ function AdminDashboard() {
               href="/attendance"
               className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800"
             >
-              Semua <ArrowRight size={14} />
+              Semua <Icon icon="ph:arrow-right" width={16} aria-hidden="true" />
             </Link>
           }
         />

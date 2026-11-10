@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, Filter } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useAuth } from "@/components/auth-provider";
 import { ProtectedPage } from "@/components/app-shell";
 import {
@@ -214,7 +214,7 @@ function AdminAttendance() {
         description="Rekap kehadiran seluruh karyawan"
         action={
           <Button variant="secondary" onClick={exportCsv} disabled={filtered.length === 0}>
-            <Download size={16} /> Ekspor CSV
+            <Icon icon="ph:download-simple" width={18} aria-hidden="true" /> Ekspor CSV
           </Button>
         }
       />
@@ -228,7 +228,7 @@ function AdminAttendance() {
       <Card>
         <div className="flex flex-wrap items-end gap-3 border-b border-stone-100 px-4 py-4 sm:px-5">
           <span className="mb-2.5 text-stone-400">
-            <Filter size={16} />
+            <Icon icon="ph:funnel" width={18} aria-hidden="true" />
           </span>
           <div className="min-w-40 flex-1 sm:max-w-52">
             <Field label="Bulan">

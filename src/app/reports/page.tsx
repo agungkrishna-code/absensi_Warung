@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, FileSpreadsheet } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { ProtectedPage } from "@/components/app-shell";
 import {
   Button,
@@ -202,7 +202,7 @@ function ReportsContent() {
                 onClick={exportSummary}
                 disabled={summary.length === 0}
               >
-                <FileSpreadsheet size={15} /> Ringkasan CSV
+                <Icon icon="ph:file-csv" width={18} aria-hidden="true" /> Ringkasan CSV
               </Button>
               <Button
                 variant="secondary"
@@ -210,7 +210,7 @@ function ReportsContent() {
                 onClick={exportDetail}
                 disabled={attendance.length === 0}
               >
-                <Download size={15} /> Detail CSV
+                <Icon icon="ph:download-simple" width={18} aria-hidden="true" /> Detail CSV
               </Button>
             </div>
           }

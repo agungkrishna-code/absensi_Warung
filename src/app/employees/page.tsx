@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Pencil, Plus, Search, UserRound, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { ProtectedPage } from "@/components/app-shell";
 import {
   Alert,
@@ -181,7 +181,7 @@ function EmployeesContent() {
         description="Kelola data dan status karyawan warung"
         action={
           <Button onClick={openCreate}>
-            <Plus size={17} /> Tambah karyawan
+            <Icon icon="ph:plus" width={19} aria-hidden="true" /> Tambah karyawan
           </Button>
         }
       />
@@ -201,7 +201,7 @@ function EmployeesContent() {
             description="Hubungkan ke akun login agar karyawan bisa absen."
             action={
               <Button variant="ghost" size="sm" onClick={() => setFormOpen(false)}>
-                <X size={16} /> Tutup
+                <Icon icon="ph:x" width={18} aria-hidden="true" /> Tutup
               </Button>
             }
           />
@@ -282,9 +282,11 @@ function EmployeesContent() {
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-4 py-3 sm:px-5">
           <div className="relative w-full sm:max-w-xs">
-            <Search
-              size={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
+            <Icon
+              icon="ph:magnifying-glass"
+              width={18}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-500"
+              aria-hidden="true"
             />
             <Input
               value={search}
@@ -324,7 +326,7 @@ function EmployeesContent() {
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-stone-100 text-stone-500">
-                          <UserRound size={17} />
+                          <Icon icon="ph:user-circle" width={19} aria-hidden="true" />
                         </span>
                         <div>
                           <p className="font-medium text-stone-800">{employee.full_name}</p>
@@ -352,7 +354,7 @@ function EmployeesContent() {
                           onClick={() => openEdit(employee)}
                           aria-label={`Ubah ${employee.full_name}`}
                         >
-                          <Pencil size={15} />
+                          <Icon icon="ph:pencil-simple" width={17} aria-hidden="true" />
                         </Button>
                         <Button
                           variant="ghost"

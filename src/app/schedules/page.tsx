@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CalendarPlus, Trash2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { ProtectedPage } from "@/components/app-shell";
 import {
   Alert,
@@ -192,7 +192,7 @@ function SchedulesContent() {
           </Field>
           <div className="sm:col-span-2 lg:col-span-5 lg:flex lg:justify-end">
             <Button type="submit" disabled={saving} className="w-full lg:w-auto">
-              {saving ? <Spinner className="size-4 border-white/40 border-t-white" /> : <CalendarPlus size={17} />}
+              {saving ? <Spinner className="size-4 border-white/40 border-t-white" /> : <Icon icon="ph:calendar-plus" width={19} aria-hidden="true" />}
               Simpan jadwal
             </Button>
           </div>
@@ -250,7 +250,7 @@ function SchedulesContent() {
                         onClick={() => void remove(schedule.id)}
                         aria-label="Hapus jadwal"
                       >
-                        <Trash2 size={15} /> Hapus
+                        <Icon icon="ph:trash" width={17} aria-hidden="true" /> Hapus
                       </Button>
                     </td>
                   </tr>
