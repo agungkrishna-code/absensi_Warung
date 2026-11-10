@@ -132,7 +132,7 @@ export function ProtectedPage({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700",
                   active
                     ? "bg-stone-900 text-white"
                     : "text-stone-600 hover:bg-stone-100 hover:text-stone-900",
@@ -191,7 +191,7 @@ export function ProtectedPage({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium",
+                  "flex min-h-12 flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-amber-700",
                   active ? "text-amber-700" : "text-stone-500",
                 )}
               >

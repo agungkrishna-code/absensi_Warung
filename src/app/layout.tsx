@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Warung Attendance",
-  description: "Absensi karyawan warung — sederhana, cepat, dan rapi.",
+  description: "Absensi karyawan, jadwal shift, dan laporan kehadiran warung.",
 };
 
 export const viewport: Viewport = {

@@ -11,9 +11,9 @@ type ButtonSize = "sm" | "md";
 
 const buttonVariants: Record<ButtonVariant, string> = {
   primary: "bg-stone-900 text-white hover:bg-stone-800 disabled:bg-stone-400",
-  accent: "bg-amber-600 text-white hover:bg-amber-700 disabled:bg-amber-300",
-  secondary: "border border-stone-300 bg-white text-stone-800 hover:bg-stone-50",
-  ghost: "text-stone-600 hover:bg-stone-100",
+  accent: "bg-amber-700 text-white hover:bg-amber-800 disabled:bg-amber-300",
+  secondary: "border border-stone-300 bg-white text-stone-800 hover:bg-amber-50",
+  ghost: "text-stone-600 hover:bg-amber-50 hover:text-stone-900",
   danger: "bg-rose-600 text-white hover:bg-rose-700",
 };
 
@@ -29,7 +29,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-not-allowed",
+        "inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 disabled:cursor-not-allowed", 
         size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2.5 text-sm",
         buttonVariants[variant],
         className,
@@ -41,7 +41,7 @@ export function Button({
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={cn("rounded-2xl border border-stone-200 bg-white shadow-sm", className)}>
+    <div className={cn("rounded-xl border border-stone-200/90 bg-white", className)}>
       {children}
     </div>
   );
@@ -106,15 +106,15 @@ export function Field({
 }
 
 const controlClass =
-  "w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 outline-none transition focus:border-amber-600 focus:ring-2 focus:ring-amber-600/20 disabled:bg-stone-100";
+  "min-h-11 w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-700/20 disabled:cursor-not-allowed disabled:bg-stone-100";
 
 export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn(controlClass, className)} {...props} />;
+  return <input className={cn("cursor-text", controlClass, className)} {...props} />;
 }
 
 export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select className={cn(controlClass, className)} {...props}>
+    <select className={cn("cursor-pointer", controlClass, className)} {...props}>
       {children}
     </select>
   );
