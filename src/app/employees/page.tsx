@@ -21,6 +21,7 @@ import type { Employee, EmployeeWithProfile, Profile } from "@/types";
 
 const emptyForm = {
   profile_id: "",
+  username: "",
   employee_code: "",
   full_name: "",
   phone: "",
@@ -53,7 +54,7 @@ function EmployeesContent() {
     const [employeeResult, profileResult] = await Promise.all([
       supabase
         .from("employees")
-        .select("*, profiles(email, full_name)")
+        .select("*, profiles(email, full_name, username)")
         .order("full_name"),
       supabase.from("profiles").select("*").order("email"),
     ]);
@@ -79,7 +80,7 @@ function EmployeesContent() {
   const filtered = employees.filter((employee) => {
     const term = search.trim().toLowerCase();
     if (!term) return true;
-    return [employee.full_name, employee.employee_code, employee.position, employee.profiles?.email]
+    return [employee.full_name, employee.employee_code, employee.position, employee.profiles?.email, employee.profiles?.username]
       .filter(Boolean)
       .some((value) => value!.toLowerCase().includes(term));
   });
@@ -96,6 +97,7 @@ function EmployeesContent() {
     setEditing(employee);
     setForm({
       profile_id: employee.profile_id ?? "",
+      username: employee.profiles?.username ?? "",
       employee_code: employee.employee_code,
       full_name: employee.full_name,
       phone: employee.phone ?? "",
@@ -116,6 +118,7 @@ function EmployeesContent() {
     setForm((current) => ({
       ...current,
       profile_id: profileId,
+      username: profile?.username ?? "",
       full_name:
         current.full_name ||
         profile?.full_name ||
@@ -128,6 +131,13 @@ function EmployeesContent() {
     event.preventDefault();
     setSaving(true);
     setError(null);
+
+    const username = form.username.trim().toLowerCase();
+    if (username && !/^[a-z0-9._-]{3,30}$/.test(username)) {
+      setError("Username harus 3–30 karakter, hanya huruf kecil, angka, titik, garis bawah, atau tanda hubung.");
+      setSaving(false);
+      return;
+    }
 
     const payload = {
       profile_id: form.profile_id || null,
@@ -151,6 +161,24 @@ function EmployeesContent() {
       );
       setSaving(false);
       return;
+    }
+
+    if (form.profile_id) {
+      const { error: usernameError } = await supabase
+        .from("profiles")
+        .update({ username: username || null })
+        .eq("id", form.profile_id);
+
+      if (usernameError) {
+        setError(
+          usernameError.code === "23505"
+            ? "Username sudah digunakan akun lain."
+            : usernameError.message,
+        );
+        setSaving(false);
+        await load();
+        return;
+      }
     }
 
     setFormOpen(false);
@@ -220,6 +248,18 @@ function EmployeesContent() {
                     </option>
                   ))}
                 </Select>
+              </Field>
+              <Field
+                label="Username login"
+                hint={form.profile_id ? "Boleh kosong. Username unik dan dapat dipakai untuk login." : "Pilih akun login untuk mengatur username."}
+              >
+                <Input
+                  value={form.username}
+                  onChange={(event) => updateField("username", event.target.value)}
+                  placeholder="contoh: budi.kasir"
+                  autoComplete="off"
+                  disabled={!form.profile_id}
+                />
               </Field>
               <Field label="Kode karyawan">
                 <Input
@@ -291,7 +331,7 @@ function EmployeesContent() {
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Cari nama, kode, atau email"
+              placeholder="Cari nama, kode, username, atau email"
               className="pl-9"
               aria-label="Cari karyawan"
             />
@@ -332,6 +372,7 @@ function EmployeesContent() {
                           <p className="font-medium text-stone-800">{employee.full_name}</p>
                           <p className="text-xs text-stone-500">
                             {employee.employee_code}
+                            {employee.profiles?.username ? ` · @${employee.profiles.username}` : ""}
                             {employee.profiles?.email ? ` · ${employee.profiles.email}` : ""}
                           </p>
                         </div>

@@ -6,6 +6,7 @@ export interface Profile {
   id: string;
   email: string | null;
   full_name: string;
+  username: string | null;
   role: Role;
   created_at: string;
 }
@@ -22,7 +23,7 @@ export interface Employee {
 }
 
 export interface EmployeeWithProfile extends Employee {
-  profiles: Pick<Profile, "email" | "full_name"> | null;
+  profiles: Pick<Profile, "email" | "full_name" | "username"> | null;
 }
 
 export interface WorkSchedule {

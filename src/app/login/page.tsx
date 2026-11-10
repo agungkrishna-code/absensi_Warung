@@ -10,7 +10,7 @@ import { getSupabase } from "@/lib/supabase/client";
 export default function LoginPage() {
   const { session, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -26,15 +26,32 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      const { error: signInError } = await getSupabase().auth.signInWithPassword({
-        email: email.trim(),
+      const supabase = getSupabase();
+      const value = identifier.trim();
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      let loginEmail = value;
+
+      if (!isEmail) {
+        const { data: resolvedEmail, error: lookupError } = await supabase.rpc(
+          "email_for_username",
+          { p_username: value },
+        );
+        if (lookupError || !resolvedEmail) {
+          setError("Username/email atau kata sandi salah.");
+          return;
+        }
+        loginEmail = resolvedEmail;
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
         password,
       });
 
       if (signInError) {
         setError(
           signInError.message === "Invalid login credentials"
-            ? "Email atau kata sandi salah."
+            ? "Username/email atau kata sandi salah."
             : signInError.message,
         );
         return;
@@ -100,14 +117,14 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             {error ? <Alert>{error}</Alert> : null}
 
-            <Field label="Email">
+            <Field label="Username atau email">
               <Input
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder="nama@warung.id"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                type="text"
+                name="username"
+                autoComplete="username"
+                placeholder="username atau nama@warung.id"
+                value={identifier}
+                onChange={(event) => setIdentifier(event.target.value)}
                 required
               />
             </Field>
