@@ -453,7 +453,7 @@ function EmployeesContent() {
                   <th className="px-5 py-3 text-right font-medium">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-teal-100/70">
                 {filtered.map((employee) => (
                   <tr key={employee.id} className="hover:bg-stone-50/60">
                     <td className="px-5 py-3.5">

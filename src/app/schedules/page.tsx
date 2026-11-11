@@ -224,7 +224,7 @@ function SchedulesContent() {
                   <th className="px-5 py-3 text-right font-medium">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-teal-100/70">
                 {schedules.map((schedule) => (
                   <tr key={schedule.id} className="hover:bg-stone-50/60">
                     <td className="whitespace-nowrap px-5 py-3.5 text-stone-700">

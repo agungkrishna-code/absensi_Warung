@@ -184,10 +184,10 @@ function ReportsContent() {
       />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <StatCard label="Hari dijadwalkan" value={loading ? "—" : totals.scheduled} />
-        <StatCard label="Kehadiran" value={loading ? "—" : totals.attended} />
-        <StatCard label="Terlambat" value={loading ? "—" : totals.late} />
-        <StatCard label="Tanpa keterangan" value={loading ? "—" : totals.absent} />
+        <StatCard label="Hari dijadwalkan" value={loading ? "—" : totals.scheduled} tone="sky" />
+        <StatCard label="Kehadiran" value={loading ? "—" : totals.attended} tone="teal" />
+        <StatCard label="Terlambat" value={loading ? "—" : totals.late} tone="orange" />
+        <StatCard label="Tanpa keterangan" value={loading ? "—" : totals.absent} tone="rose" />
       </div>
 
       <Card>
@@ -239,7 +239,7 @@ function ReportsContent() {
                   <th className="px-5 py-3 text-right font-medium">Kehadiran</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-teal-100/70">
                 {summary.map((row) => (
                   <tr key={row.employee.id} className="hover:bg-stone-50/60">
                     <td className="px-5 py-3.5">
@@ -252,7 +252,7 @@ function ReportsContent() {
                     <td className="px-5 py-3.5 text-right tabular-nums text-stone-700">
                       {row.attended}
                     </td>
-                    <td className="px-5 py-3.5 text-right tabular-nums text-amber-700">
+                    <td className="px-5 py-3.5 text-right tabular-nums text-orange-600">
                       {row.late}
                     </td>
                     <td className="px-5 py-3.5 text-right tabular-nums text-rose-700">
@@ -286,7 +286,7 @@ function ReportsContent() {
         ) : (
           <div className="max-h-96 overflow-auto">
             <table className="w-full text-left text-sm">
-              <thead className="sticky top-0 border-b border-stone-100 bg-white text-xs uppercase tracking-wide text-stone-500">
+              <thead className="sticky top-0 border-b border-teal-100 bg-gradient-to-r from-teal-50/90 to-violet-50/70 text-xs uppercase tracking-wide text-stone-500">
                 <tr>
                   <th className="px-5 py-3 font-medium">Tanggal</th>
                   <th className="px-5 py-3 font-medium">Karyawan</th>
@@ -295,7 +295,7 @@ function ReportsContent() {
                   <th className="px-5 py-3 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-teal-100/70">
                 {attendance.map((row) => (
                   <tr key={row.id}>
                     <td className="whitespace-nowrap px-5 py-3 text-stone-700">

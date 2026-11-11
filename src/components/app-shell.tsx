@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/components/auth-provider";
-import { Badge, Button, Spinner } from "@/components/ui";
+import { Button, Spinner } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types";
 
@@ -104,14 +104,14 @@ export function ProtectedPage({
 
   return (
     <div className="min-h-screen md:flex">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-stone-200 bg-white md:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-gradient-to-b from-teal-800 via-teal-900 to-violet-950 md:flex">
         <div className="flex items-center gap-2.5 px-5 py-5">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-amber-700 text-white">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white ring-1 ring-white/20 backdrop-blur">
             <Icon icon="ph:storefront" width={20} aria-hidden="true" />
           </span>
           <div>
-            <p className="text-sm font-semibold leading-tight text-stone-900">Warung</p>
-            <p className="text-xs text-stone-500">Attendance</p>
+            <p className="text-sm font-semibold leading-tight text-white">Warung</p>
+            <p className="text-xs text-teal-200/80">Attendance</p>
           </div>
         </div>
 
@@ -122,13 +122,20 @@ export function ProtectedPage({
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700",
+                  "relative flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
                   active
-                    ? "bg-amber-800 text-white"
-                    : "text-stone-600 hover:bg-amber-50 hover:text-stone-900",
+                    ? "bg-white/15 text-white"
+                    : "text-teal-100/70 hover:bg-white/10 hover:text-white",
                 )}
               >
+                {active ? (
+                  <span
+                    className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-amber-400"
+                    aria-hidden="true"
+                  />
+                ) : null}
                 <Icon icon={item.icon} width={19} aria-hidden="true" />
                 {item.label}
               </Link>
@@ -136,35 +143,49 @@ export function ProtectedPage({
           })}
         </nav>
 
-        <div className="border-t border-stone-100 p-3">
-          <div className="mb-2 flex items-center justify-between gap-2 px-2">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-stone-900">{displayName}</p>
-              <p className="truncate text-xs text-stone-500">{profile.email}</p>
+        <div className="border-t border-white/10 p-3">
+          <div className="mb-2 flex items-center gap-2.5 rounded-xl px-2 py-2">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-amber-400 text-xs font-semibold uppercase text-stone-900">
+              {displayName.slice(0, 2)}
+            </span>
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-0.5">
+              <p className="w-full truncate text-sm font-medium text-white">{displayName}</p>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
+                  profile.role === "admin"
+                    ? "bg-amber-400/20 text-amber-200 ring-amber-300/30"
+                    : "bg-white/10 text-teal-100 ring-white/20",
+                )}
+              >
+                {profile.role === "admin" ? "Admin" : "Karyawan"}
+              </span>
             </div>
-            <Badge tone={profile.role === "admin" ? "admin" : "neutral"}>
-              {profile.role === "admin" ? "Admin" : "Karyawan"}
-            </Badge>
           </div>
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
+          <button
             onClick={() => void signOut()}
+            className="flex min-h-11 w-full cursor-pointer items-center justify-start gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-teal-100/80 transition-colors duration-150 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <Icon icon="ph:sign-out" width={18} aria-hidden="true" /> Keluar
-          </Button>
+          </button>
         </div>
       </aside>
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-stone-200 bg-amber-50/70 px-4 py-3 md:hidden">
+        <header className="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-teal-700 to-violet-700 px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-amber-700 text-white">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-white/15 text-white ring-1 ring-white/20">
               <Icon icon="ph:storefront" width={18} aria-hidden="true" />
             </span>
-            <span className="text-sm font-semibold">Warung Attendance</span>
+            <span className="text-sm font-semibold text-white">Warung Attendance</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => void signOut()} aria-label="Keluar">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-white/15 hover:text-white"
+            onClick={() => void signOut()}
+            aria-label="Keluar"
+          >
             <Icon icon="ph:sign-out" width={18} aria-hidden="true" />
           </Button>
         </header>
@@ -173,19 +194,31 @@ export function ProtectedPage({
           {children}
         </main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-stone-200 bg-white/95 backdrop-blur md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-white/10 bg-gradient-to-r from-teal-800 to-violet-900 pb-[env(safe-area-inset-bottom)] md:hidden">
           {nav.map((item) => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-12 flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-amber-700",
-                  active ? "text-amber-700" : "text-stone-500",
+                  "flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[11px] font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white",
+                  active ? "text-amber-300" : "text-teal-100/60",
                 )}
               >
-                <Icon icon={item.icon} width={21} aria-hidden="true" />
+                <span
+                  className={cn(
+                    "flex h-6 items-center justify-center rounded-full px-4 transition-colors duration-150",
+                    active ? "bg-white/15" : "",
+                  )}
+                >
+                  <Icon
+                    icon={active ? `${item.icon}-fill` : item.icon}
+                    width={20}
+                    aria-hidden="true"
+                  />
+                </span>
                 {item.label}
               </Link>
             );

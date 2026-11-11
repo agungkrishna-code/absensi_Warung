@@ -1,11 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Trebuchet MS", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --color-cream: #f7f3e9;
-  --color-ink: #27251f;
-  --color-amber-600: #a64b12;
-  --color-amber-700: #873b0d;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-cream: #fbf7f2;
+  --color-ink: #26221e;
+  --color-amber-600: #0d9488;
+  --color-amber-700: #0f766e;
+  --shadow-card: 0 1px 2px rgb(38 34 30 / 0.05), 0 4px 16px -4px rgb(38 34 30 / 0.09);
+  --shadow-card-hover: 0 1px 2px rgb(38 34 30 / 0.06), 0 8px 24px -6px rgb(38 34 30 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(38 34 30 / 0.07), 0 12px 32px -8px rgb(38 34 30 / 0.2);
 }
 
 html,
@@ -15,17 +18,33 @@ body {
 
 body {
   background-color: var(--color-cream);
+  background-image:
+    radial-gradient(60rem 30rem at 110% -10%, rgb(139 92 246 / 0.12), transparent 60%),
+    radial-gradient(50rem 28rem at -20% 20%, rgb(20 184 166 / 0.14), transparent 60%),
+    radial-gradient(45rem 25rem at 80% 110%, rgb(249 115 22 / 0.12), transparent 60%),
+    radial-gradient(35rem 20rem at 50% -15%, rgb(244 114 182 / 0.08), transparent 60%),
+    linear-gradient(180deg, #fdfbf8 0%, var(--color-cream) 55%, #f6f1e9 100%);
+  background-attachment: fixed;
   color: var(--color-ink);
 }
 
 ::selection {
-  background-color: #fde68a;
+  background-color: #99f6e4;
 }
 
 input[type="date"],
 input[type="month"],
 input[type="time"] {
   min-height: 2.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media print {

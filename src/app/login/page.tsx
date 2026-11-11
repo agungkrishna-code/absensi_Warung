@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
+import { motion } from "motion/react";
 import { useAuth } from "@/components/auth-provider";
 import { Alert, Button, Field, Input, Spinner } from "@/components/ui";
 import { getSupabase } from "@/lib/supabase/client";
@@ -66,41 +67,69 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-stretch">
-      <section className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-stone-900 p-10 text-stone-100 lg:flex">
-        <div className="absolute -right-24 -top-24 size-72 rounded-full bg-amber-600/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-16 size-96 rounded-full bg-amber-500/10 blur-3xl" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="flex min-h-screen items-stretch"
+    >
+      <section className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-teal-800 via-teal-900 to-violet-950 p-10 text-stone-100 lg:flex">
+        <div className="absolute -right-24 -top-24 size-72 rounded-full bg-teal-400/30 blur-3xl" />
+        <div className="absolute -bottom-32 -left-16 size-96 rounded-full bg-violet-500/30 blur-3xl" />
+        <div className="absolute right-16 top-1/3 size-40 rounded-full bg-orange-400/20 blur-3xl" />
 
-        <div className="relative flex items-center gap-3">
-          <span className="flex size-11 items-center justify-center rounded-2xl bg-amber-600 text-white">
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.4, ease: "easeOut" }}
+          className="relative flex items-center gap-3"
+        >
+          <span className="flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-violet-500 text-white">
             <Icon icon="ph:storefront" width={24} aria-hidden="true" />
           </span>
           <div>
             <p className="font-semibold leading-tight">Warung Attendance</p>
             <p className="text-xs text-stone-400">Manajemen absensi karyawan</p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="relative max-w-md">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-500">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.5, ease: "easeOut" }}
+          className="relative max-w-md"
+        >
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-teal-300">
             Absensi harian
           </p>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight">
+          <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-white">
             Catat kehadiran tanpa ribet.
           </h1>
-          <p className="mt-4 text-sm leading-relaxed text-stone-400">
+          <p className="mt-4 text-sm leading-relaxed text-teal-100/70">
             Check-in, check-out, jadwal shift, dan laporan bulanan dalam satu tempat.
             Waktu absensi mengikuti zona WITA.
           </p>
-        </div>
+        </motion.div>
 
-        <p className="relative text-xs text-stone-500">Warung Attendance · WITA</p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+          className="relative text-xs text-stone-500"
+        >
+          Warung Attendance · WITA
+        </motion.p>
       </section>
 
-      <section className="flex flex-1 items-center justify-center px-5 py-10">
-        <div className="w-full max-w-sm">
+      <section className="flex flex-1 items-center justify-center bg-white/60 px-5 py-10 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+          className="w-full max-w-sm rounded-2xl border border-teal-100/80 bg-white/90 p-6 shadow-(--shadow-lift) backdrop-blur-sm sm:p-8 lg:rounded-none lg:border-0 lg:p-0 lg:shadow-none lg:backdrop-blur-none"
+        >
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-amber-600 text-white">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-violet-600 text-white shadow-sm shadow-teal-600/25">
               <Icon icon="ph:storefront" width={22} aria-hidden="true" />
             </span>
             <div>
@@ -109,7 +138,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <h2 className="text-2xl font-semibold tracking-tight text-stone-900">Masuk</h2>
+          <h2 className="bg-gradient-to-r from-teal-700 to-violet-700 bg-clip-text text-2xl font-semibold tracking-tight text-transparent">Masuk</h2>
           <p className="mt-1 text-sm text-stone-500">
             Gunakan akun yang diberikan admin warung.
           </p>
@@ -159,11 +188,11 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-xs leading-relaxed text-stone-500">
-            Belum punya akun? Hubungi admin warung. Akun karyawan dibuat melalui Supabase
-            Dashboard, bukan lewat halaman ini.
+            Belum punya akun? Hubungi admin warung — admin bisa membuatkan akun langsung dari
+            halaman Karyawan.
           </p>
-        </div>
+        </motion.div>
       </section>
-    </div>
+    </motion.div>
   );
 }

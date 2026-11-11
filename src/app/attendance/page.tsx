@@ -105,9 +105,9 @@ function EmployeeAttendance() {
       />
 
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <StatCard label="Hari hadir" value={loading ? "—" : rows.length} />
-        <StatCard label="Terlambat" value={loading ? "—" : late} />
-        <StatCard label="Sudah pulang" value={loading ? "—" : complete} />
+        <StatCard label="Hari hadir" value={loading ? "—" : rows.length} tone="teal" />
+        <StatCard label="Terlambat" value={loading ? "—" : late} tone="orange" />
+        <StatCard label="Sudah pulang" value={loading ? "—" : complete} tone="violet" />
       </div>
 
       <Card>
@@ -119,7 +119,7 @@ function EmployeeAttendance() {
         ) : rows.length === 0 ? (
           <EmptyState title="Belum ada absensi" description="Tidak ada catatan pada bulan ini." />
         ) : (
-          <ul className="divide-y divide-stone-100">
+          <ul className="divide-y divide-teal-100/70">
             {rows.map((row) => (
               <li key={row.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div>
@@ -220,9 +220,9 @@ function AdminAttendance() {
       />
 
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <StatCard label="Total catatan" value={loading ? "—" : filtered.length} />
-        <StatCard label="Terlambat" value={loading ? "—" : late} />
-        <StatCard label="Sudah pulang" value={loading ? "—" : complete} />
+        <StatCard label="Total catatan" value={loading ? "—" : filtered.length} tone="sky" />
+        <StatCard label="Terlambat" value={loading ? "—" : late} tone="orange" />
+        <StatCard label="Sudah pulang" value={loading ? "—" : complete} tone="violet" />
       </div>
 
       <Card>
@@ -280,7 +280,7 @@ function AdminAttendance() {
                   <th className="px-5 py-3 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-teal-100/70">
                 {filtered.map((row) => (
                   <tr key={row.id} className="hover:bg-stone-50/60">
                     <td className="whitespace-nowrap px-5 py-3 text-stone-700">

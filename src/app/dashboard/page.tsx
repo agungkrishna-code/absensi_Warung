@@ -166,15 +166,16 @@ function EmployeeDashboard() {
 
       <div className="grid gap-5 lg:grid-cols-5">
         <Card className="overflow-hidden lg:col-span-3">
-          <div className="relative bg-stone-900 px-5 py-6 text-white sm:px-7">
-            <div className="absolute -right-10 -top-16 size-48 rounded-full bg-amber-500/15 blur-2xl" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-teal-700 via-teal-800 to-violet-900 px-5 py-6 text-white sm:px-7">
+            <div className="absolute -right-10 -top-16 size-48 rounded-full bg-amber-400/25 blur-2xl" />
+            <div className="absolute -bottom-16 -left-10 size-40 rounded-full bg-fuchsia-500/20 blur-2xl" />
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-stone-400">
               Absensi hari ini
             </p>
             <p className="mt-1.5 text-lg font-medium">{formatDate(workDate, { weekday: "long" })}</p>
 
             <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 ring-1 ring-white/20">
                 <Icon icon="ph:calendar-dots" width={16} className="text-amber-400" aria-hidden="true" />
                 {schedule
                   ? `Shift ${formatShift(schedule.shift_start)}–${formatShift(schedule.shift_end)}`
@@ -190,14 +191,14 @@ function EmployeeDashboard() {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-white/5 px-3.5 py-3">
-                <p className="text-xs text-stone-400">Check-in</p>
+              <div className="rounded-xl bg-white/10 px-3.5 py-3 ring-1 ring-white/10">
+                <p className="text-xs text-teal-100/70">Check-in</p>
                 <p className="mt-1 text-xl font-semibold tabular-nums">
                   {formatTime(today?.check_in)}
                 </p>
               </div>
-              <div className="rounded-xl bg-white/5 px-3.5 py-3">
-                <p className="text-xs text-stone-400">Check-out</p>
+              <div className="rounded-xl bg-white/10 px-3.5 py-3 ring-1 ring-white/10">
+                <p className="text-xs text-teal-100/70">Check-out</p>
                 <p className="mt-1 text-xl font-semibold tabular-nums">
                   {formatTime(today?.check_out)}
                 </p>
@@ -244,7 +245,7 @@ function EmployeeDashboard() {
             action={
               <Link
                 href="/attendance"
-                className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800"
+                className="inline-flex items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800"
               >
                 Semua <Icon icon="ph:arrow-right" width={16} aria-hidden="true" />
               </Link>
@@ -257,7 +258,7 @@ function EmployeeDashboard() {
           ) : history.length === 0 ? (
             <EmptyState title="Belum ada riwayat" description="Absensi pertama akan muncul di sini." />
           ) : (
-            <ul className="divide-y divide-stone-100">
+            <ul className="divide-y divide-teal-100/70">
               {history.map((row) => (
                 <li key={row.id} className="flex items-center justify-between gap-3 px-5 py-3">
                   <div>
@@ -330,21 +331,25 @@ function AdminDashboard() {
         <StatCard
           label="Karyawan aktif"
           value={loading ? "—" : employees.length}
+          tone="violet"
           icon={<Icon icon="ph:users-three" width={19} aria-hidden="true" />}
         />
         <StatCard
           label="Sudah absen"
           value={loading ? "—" : attendance.length}
+          tone="teal"
           icon={<Icon icon="ph:check-circle" width={19} aria-hidden="true" />}
         />
         <StatCard
           label="Terlambat"
           value={loading ? "—" : late}
+          tone="orange"
           icon={<Icon icon="ph:hourglass-medium" width={19} aria-hidden="true" />}
         />
         <StatCard
           label="Belum absen"
           value={loading ? "—" : notCheckedIn}
+          tone="rose"
           icon={<Icon icon="ph:clock" width={19} aria-hidden="true" />}
         />
       </div>
@@ -356,7 +361,7 @@ function AdminDashboard() {
           action={
             <Link
               href="/attendance"
-              className="inline-flex items-center gap-1 text-sm font-medium text-amber-700 hover:text-amber-800"
+              className="inline-flex items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-800"
             >
               Semua <Icon icon="ph:arrow-right" width={16} aria-hidden="true" />
             </Link>
@@ -379,7 +384,7 @@ function AdminDashboard() {
                   <th className="px-5 py-3 font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-teal-100/70">
                 {attendance.map((row) => (
                   <tr key={row.id}>
                     <td className="px-5 py-3">
