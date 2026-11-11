@@ -151,13 +151,76 @@ Setelah migrasi dijalankan dan dua akun uji tersedia:
 
 ## Build dan deploy
 
+Project Cloudflare Pages: **`warung-attendance`** → https://warung-attendance.pages.dev
+
+Saat ini project memakai **direct upload** (tidak terhubung ke GitHub), jadi:
+
+- `git push` **tidak** otomatis men-deploy apa pun.
+- Build dijalankan di komputer sendiri, lalu folder `out/` diunggah dengan wrangler.
+- Production branch project ini bernama **`main`**.
+
+### Build lokal
+
 ```bash
+npm install          # sekali saja
 npm run build
 ```
 
-Output statis ada di `out/`. Perintah build juga menjalankan `scripts/fix-static-export-segments.mjs` untuk meratakan file prefetch RSC yang ditulis Next.js 16 ke folder bersarang di Windows. Di Linux/Cloudflare Pages script tersebut tidak melakukan perubahan.
+Hasil build ada di `out/`. Perintah build juga menjalankan `scripts/fix-static-export-segments.mjs` untuk meratakan file prefetch RSC yang ditulis Next.js 16 ke folder bersarang di Windows; di Linux script tersebut tidak melakukan perubahan.
 
-Cloudflare Pages:
+Nilai `NEXT_PUBLIC_*` **di-inline saat build**. Karena build terjadi di lokal, variabel dibaca dari `.env.local` — bukan dari Environment Variables di dashboard Cloudflare. Jika `.env.local` berubah, build harus diulang.
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+```
+
+### Deploy (manual, cara yang dipakai)
+
+1. Login wrangler (sekali saja per komputer):
+
+   ```bash
+   npx wrangler login
+   npx wrangler whoami
+   ```
+
+2. Build versi terbaru:
+
+   ```bash
+   npm run build
+   ```
+
+3. Unggah ke production:
+
+   ```bash
+   npx wrangler pages deploy out --project-name warung-attendance --branch main
+   ```
+
+4. Cek hasilnya di https://warung-attendance.pages.dev (buka jendela incognito atau hard refresh bila masih terlihat versi lama).
+
+> **Penting:** `--branch main` wajib. Tanpa itu wrangler memakai branch git lokal (`master`), dan hasilnya hanya deployment **Preview** di `https://master.warung-attendance.pages.dev` — situs production tidak berubah.
+
+### Verifikasi deployment
+
+```bash
+npx wrangler pages deployment list --project-name warung-attendance
+```
+
+Deployment terbaru harus bertanda **Environment: Production**, **Branch: main**, dan **Source** sama dengan commit terakhir. URL `https://<id>.warung-attendance.pages.dev` pada baris itu adalah build yang sedang aktif.
+
+### Troubleshooting
+
+| Gejala | Penyebab & solusi |
+| --- | --- |
+| Situs production tidak berubah | Deploy masuk ke Preview. Cek kolom Environment; ulangi dengan `--branch main`. |
+| Masih tampil versi lama | Cache browser. Hard refresh (Ctrl+Shift+R) atau buka mode incognito. |
+| `Project not found` / gagal upload | Belum login atau akun Cloudflare salah. Jalankan `npx wrangler login`, lalu cek `npx wrangler pages project list`. |
+| Halaman kosong / data Supabase tidak muncul | `.env.local` kosong atau salah saat build. Perbaiki, lalu `npm run build` dan deploy ulang. |
+| `npm run build` gagal | Jalankan `npm run typecheck` untuk melihat error TypeScript lebih jelas. |
+
+### Opsional: deploy otomatis lewat GitHub
+
+Bila ingin `git push` langsung men-deploy, hubungkan repo `agungkrishna-code/absensi_Warung` di Cloudflare Dashboard → Workers & Pages → project → Settings → Builds & deployments, dengan konfigurasi:
 
 - Framework preset: None
 - Build command: `npm run build`
@@ -165,7 +228,17 @@ Cloudflare Pages:
 - Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - Node version: 22 atau lebih baru
 
-Nilai `NEXT_PUBLIC_*` di-inline saat build, jadi variabel harus sudah diatur sebelum build Cloudflare Pages.
+Setelah itu deployment manual tidak diperlukan lagi. Jangan mencampur keduanya tanpa memastikan production branch Cloudflare sama dengan branch yang di-push.
+
+### Deploy perubahan Supabase
+
+Deploy Cloudflare hanya mengunggah frontend. Perubahan database dan akun tetap dilakukan terpisah:
+
+```bash
+# migrasi: jalankan file di supabase/migrations lewat SQL Editor, berurutan
+supabase functions deploy create-employee-account
+supabase functions deploy delete-employee-account
+```
 
 ## Struktur
 
