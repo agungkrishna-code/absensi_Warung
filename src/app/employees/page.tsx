@@ -21,6 +21,9 @@ import type { Employee, EmployeeWithProfile, Profile } from "@/types";
 
 const emptyForm = {
   profile_id: "",
+  create_account: false,
+  email: "",
+  password: "",
   username: "",
   employee_code: "",
   full_name: "",
@@ -97,6 +100,9 @@ function EmployeesContent() {
     setEditing(employee);
     setForm({
       profile_id: employee.profile_id ?? "",
+      create_account: false,
+      email: employee.profiles?.email ?? "",
+      password: "",
       username: employee.profiles?.username ?? "",
       employee_code: employee.employee_code,
       full_name: employee.full_name,
@@ -133,14 +139,34 @@ function EmployeesContent() {
     setError(null);
 
     const username = form.username.trim().toLowerCase();
+    if (form.create_account && !editing && form.password.length < 8) {
+      setError("Password awal minimal 8 karakter.");
+      setSaving(false);
+      return;
+    }
     if (username && !/^[a-z0-9._-]{3,30}$/.test(username)) {
       setError("Username harus 3–30 karakter, hanya huruf kecil, angka, titik, garis bawah, atau tanda hubung.");
       setSaving(false);
       return;
     }
 
+    const supabase = getSupabase();
+    let profileId = form.profile_id;
+
+    if (form.create_account && !editing) {
+      const { data, error: accountError } = await supabase.functions.invoke("create-employee-account", {
+        body: { email: form.email, password: form.password, full_name: form.full_name },
+      });
+      if (accountError || data?.error) {
+        setError(data?.error ?? accountError?.message ?? "Akun login tidak berhasil dibuat.");
+        setSaving(false);
+        return;
+      }
+      profileId = data.user_id as string;
+    }
+
     const payload = {
-      profile_id: form.profile_id || null,
+      profile_id: profileId || null,
       employee_code: form.employee_code.trim(),
       full_name: form.full_name.trim(),
       phone: form.phone.trim() || null,
@@ -148,12 +174,19 @@ function EmployeesContent() {
       employment_status: form.employment_status,
     };
 
-    const supabase = getSupabase();
     const result = editing
       ? await supabase.from("employees").update(payload).eq("id", editing.id)
       : await supabase.from("employees").insert(payload);
 
     if (result.error) {
+      if (form.create_account && profileId) {
+        const { error: cleanupError } = await supabase.functions.invoke("delete-employee-account", { body: { user_id: profileId } });
+        setError(cleanupError ? `${result.error.message} Akun login juga perlu dihapus dari Supabase Auth.` : (
+          result.error.code === "23505" ? "Kode karyawan sudah dipakai." : result.error.message
+        ));
+        setSaving(false);
+        return;
+      }
       setError(
         result.error.code === "23505"
           ? "Kode karyawan atau akun profil sudah dipakai."
@@ -163,13 +196,22 @@ function EmployeesContent() {
       return;
     }
 
-    if (form.profile_id) {
+    if (profileId) {
       const { error: usernameError } = await supabase
         .from("profiles")
         .update({ username: username || null })
-        .eq("id", form.profile_id);
+        .eq("id", profileId);
 
       if (usernameError) {
+        if (form.create_account && profileId) {
+          const { error: cleanupError } = await supabase.functions.invoke("delete-employee-account", { body: { user_id: profileId } });
+          if (cleanupError) {
+            setError("Username gagal disimpan dan akun Auth tidak berhasil dibersihkan. Hapus akun yang baru dibuat dari Supabase Auth.");
+            setSaving(false);
+            await load();
+            return;
+          }
+        }
         setError(
           usernameError.code === "23505"
             ? "Username sudah digunakan akun lain."
@@ -218,8 +260,7 @@ function EmployeesContent() {
       {error && !formOpen ? <Alert>{error}</Alert> : null}
 
       <Alert tone="info">
-        Akun login dibuat lewat Supabase Dashboard (Authentication → Users). Setelah itu,
-        hubungkan akun ke karyawan di form ini. Role admin hanya diubah lewat database.
+        Admin dapat membuat akun login langsung saat menambahkan karyawan. Role admin hanya diubah lewat database.
       </Alert>
 
       {formOpen ? (
@@ -236,29 +277,81 @@ function EmployeesContent() {
           <form onSubmit={handleSubmit} className="space-y-4 p-4 sm:p-5">
             {error ? <Alert>{error}</Alert> : null}
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Akun login" hint="Hanya akun yang belum terhubung.">
-                <Select
-                  value={form.profile_id}
-                  onChange={(event) => handleProfileChange(event.target.value)}
-                >
-                  <option value="">— Tanpa akun —</option>
-                  {availableProfiles.map((profile) => (
-                    <option key={profile.id} value={profile.id}>
-                      {profile.email ?? profile.full_name ?? profile.id}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
+              {!editing ? (
+                <Field label="Akun login">
+                  <Select
+                    value={form.create_account ? "create" : form.profile_id}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      if (value === "create") {
+                        setForm((current) => ({ ...current, create_account: true, profile_id: "" }));
+                      } else {
+                        setForm((current) => ({ ...current, create_account: false, password: "" }));
+                        handleProfileChange(value);
+                      }
+                    }}
+                  >
+                    <option value="">Tanpa akun login</option>
+                    <option value="create">Buat akun login baru</option>
+                    {availableProfiles.map((profile) => (
+                      <option key={profile.id} value={profile.id}>
+                        {profile.email ?? profile.full_name ?? profile.id}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+              ) : null}
+              {form.create_account ? (
+                <>
+                  <Field label="Email login" hint="Email ini dipakai karyawan untuk masuk.">
+                    <Input
+                      type="email"
+                      value={form.email}
+                      onChange={(event) => updateField("email", event.target.value)}
+                      placeholder="nama@contoh.com"
+                      autoComplete="email"
+                      required
+                    />
+                  </Field>
+                  <Field label="Password awal" hint="Minimal 8 karakter. Sampaikan password ini kepada karyawan secara aman.">
+                    <Input
+                      type="password"
+                      value={form.password}
+                      onChange={(event) => updateField("password", event.target.value)}
+                      autoComplete="new-password"
+                      minLength={8}
+                      required
+                    />
+                  </Field>
+                </>
+              ) : null}
+              {!form.create_account && !editing && form.profile_id ? (
+                <Field label="Akun login" hint="Akun yang sudah terhubung untuk karyawan ini.">
+                  <Input value={profiles.find((profile) => profile.id === form.profile_id)?.email ?? "Akun terhubung"} disabled />
+                </Field>
+              ) : null}
+              {!form.create_account && editing ? (
+                <Field label="Akun login" hint="Pilih akun yang sudah terdaftar.">
+                  <Select value={form.profile_id} onChange={(event) => handleProfileChange(event.target.value)}>
+                    <option value="">Tanpa akun</option>
+                    {availableProfiles.map((profile) => (
+                      <option key={profile.id} value={profile.id}>
+                        {profile.email ?? profile.full_name ?? profile.id}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+              ) : null}
               <Field
                 label="Username login"
-                hint={form.profile_id ? "Boleh kosong. Username unik dan dapat dipakai untuk login." : "Pilih akun login untuk mengatur username."}
+                hint={form.profile_id || form.create_account ? "Boleh kosong. Username unik dan dapat dipakai untuk login." : "Pilih atau buat akun login untuk mengatur username."}
               >
                 <Input
                   value={form.username}
                   onChange={(event) => updateField("username", event.target.value)}
                   placeholder="contoh: budi.kasir"
                   autoComplete="off"
-                  disabled={!form.profile_id}
+                  disabled={!form.profile_id && !form.create_account}
                 />
               </Field>
               <Field label="Kode karyawan">
